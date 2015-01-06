@@ -25,3 +25,9 @@ function example1_greet_options(array $options): void;
 <<__Native>>
 function example1_greet_make_options(string $name = "",
                                      bool $hello = true): array;
+
+<<__Native>>
+function example1_password(string $guess): mixed;
+
+<<__Native>>
+function example1_var_dump(mixed $value): void;

@@ -31,3 +31,17 @@ function example1_password(string $guess): mixed;
 
 <<__Native>>
 function example1_var_dump(mixed $value): void;
+
+class Example1_Greeter {
+  public function greet() {
+    echo self::DefaultGreeting(), " {$this->name}\n";
+  }
+
+  public function __construct(protected string $name = 'Stranger') {}
+
+  <<__Native>>
+  public function getName(): string;
+
+  <<__Native>>
+  static public function DefaultGreeting(): string;
+}

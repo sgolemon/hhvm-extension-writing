@@ -34,7 +34,7 @@ function example1_var_dump(mixed $value): void;
 
 class Example1_Greeter {
   public function greet() {
-    echo self::DefaultGreeting(), " {$this->name}\n";
+    echo self::DEFAULT_GREETING, " {$this->name}\n";
   }
 
   public function __construct(protected string $name = 'Stranger') {}

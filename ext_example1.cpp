@@ -120,21 +120,23 @@ void HHVM_FUNCTION(example1_var_dump, const Variant &value) {
 }
 
 const StaticString
-  s_Example1_Greeter("Example1_Greeter");
+  s_Example1_Greeter("Example1_Greeter"),
+  s_Hello("Hello");
 
 String HHVM_METHOD(Example1_Greeter, getName) {
   return this_->o_get(s_name, false, s_Example1_Greeter);
 }
 
 String HHVM_STATIC_METHOD(Example1_Greeter, DefaultGreeting) {
-  return "Hello";
+  return s_Hello;
 }
 
 const StaticString
   s_EXAMPLE1_NOTHING("EXAMPLE1_NOTHING"),
   s_EXAMPLE1_YEAR("EXAMPLE1_YEAR"),
   s_EXAMPLE1_URL("EXAMPLE1_URL"),
-  s_URL("http://blog.golemon.com/2015/01/hhvm-extension-writing-part-i.html");
+  s_URL("http://blog.golemon.com/2015/01/hhvm-extension-writing-part-i.html"),
+  s_DEFAULT_GREETING("DEFAULT_GREETING");
 
 class Example1Extension : public Extension {
  public:
@@ -155,6 +157,10 @@ class Example1Extension : public Extension {
     HHVM_FE(example1_greet_make_options);
     HHVM_FE(example1_password);
     HHVM_FE(example1_var_dump);
+
+    Native::registerClassConstant<KindOfStaticString>(s_Example1_Greeter.get(),
+                                                      s_DEFAULT_GREETING.get(),
+                                                      s_Hello.get());
 
     HHVM_ME(Example1_Greeter, getName);
     HHVM_STATIC_ME(Example1_Greeter, DefaultGreeting);

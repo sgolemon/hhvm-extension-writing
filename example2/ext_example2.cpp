@@ -1,6 +1,8 @@
 #include "hphp/runtime/base/base-includes.h"
 #include "hphp/runtime/vm/native-data.h"
 
+#include <stdio.h>
+
 namespace HPHP {
 /////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +49,28 @@ void HHVM_METHOD(Example2_File, __construct,
   }
 }
 
+String HHVM_METHOD(Example2_File, read, int64_t len) {
+  auto data = Native::data<Example2_File>(this_);
+  String ret(len, ReserveString);
+  auto slice = ret.bufferSlice();
+  len = fread(slice.ptr, 1, len, data->m_file);
+  return ret.setSize(len);
+}
+
+int64_t HHVM_METHOD(Example2_File, tell) {
+  auto data = Native::data<Example2_File>(this_);
+  return ftell(data->m_file);
+}
+
+bool HHVM_METHOD(Example2_File, seek, int64_t pos, int64_t whence) {
+  if ((whence != SEEK_SET) && (whence != SEEK_CUR) && (whence != SEEK_END)) {
+    raise_warning("Invalid seek-whence");
+    return false;
+  }
+  auto data = Native::data<Example2_File>(this_);
+  return 0 == fseek(data->m_file, pos, whence);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 class Example2Extension : public Extension {
@@ -55,6 +79,17 @@ class Example2Extension : public Extension {
 
   void moduleInit() override {
     HHVM_ME(Example2_File, __construct);
+    HHVM_ME(Example2_File, read);
+    HHVM_ME(Example2_File, tell);
+    HHVM_ME(Example2_File, seek);
+
+#define X(w) \
+    Native::registerClassConstant<KindOfInt64>(s_Example2_File.get(), \
+                                               String::FromCStr(#w).get(), w);
+    X(SEEK_SET);
+    X(SEEK_CUR);
+    X(SEEK_END);
+#undef X
 
     Native::registerNativeDataInfo<Example2_File>(s_Example2_File.get());
     loadSystemlib();

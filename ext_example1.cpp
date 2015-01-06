@@ -17,6 +17,27 @@ void HHVM_FUNCTION(example1_life, VRefParam meaning) {
   meaning = 42;
 }
 
+String HHVM_FUNCTION(example1_count_preallocate) {
+  /* 30 bytes: 3 per number: 'X, ' */
+  String ret(30, ReserveString);
+  auto slice = ret.bufferSlice();
+  for (int i = 0; i < 10; ++i) {
+    snprintf(slice.ptr + (i*3), 4, "%d, ", i);
+  }
+  /* Terminate just after the 9th digit, overwriting the ',' with a null byte */
+  return ret.setSize((9*3) + 1);
+}
+
+String HHVM_FUNCTION(example1_count_concatenate) {
+  String ret, delimiter(", ");
+  for (int i = 0; i < 10; ++i) {
+    if (i > 0) {
+      ret += delimiter;
+    }
+    ret += String(i);
+  }
+  return ret;
+}
 const StaticString
   s_EXAMPLE1_NOTHING("EXAMPLE1_NOTHING"),
   s_EXAMPLE1_YEAR("EXAMPLE1_YEAR"),
@@ -36,6 +57,8 @@ class Example1Extension : public Extension {
     HHVM_FE(example1_greet);
     HHVM_FE(example1_is_odd);
     HHVM_FE(example1_life);
+    HHVM_FE(example1_count_preallocate);
+    HHVM_FE(example1_count_concatenate);
 
     loadSystemlib();
   }

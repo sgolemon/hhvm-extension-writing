@@ -38,6 +38,36 @@ String HHVM_FUNCTION(example1_count_concatenate) {
   }
   return ret;
 }
+
+const StaticString
+  s_name("name"),
+  s_hello("hello"),
+  s_Stranger("Stranger");
+
+void HHVM_FUNCTION(example1_greet_options, const Array& options) {
+  String name(s_Stranger);
+  if (options.exists(s_name)) {
+    name = options[s_name].toString();
+  }
+  bool hello = true;
+  if (options.exists(s_hello)) {
+    hello = options[s_hello].toBoolean();
+  }
+  g_context->write(hello ? "Hello " : "Goodbye ");
+  g_context->write(name);
+  g_context->write("\n");
+}
+
+Array HHVM_FUNCTION(example1_greet_make_options,
+                    const String& name, bool hello) {
+  Array ret = Array::Create();
+  if (!name.empty()) {
+    ret.set(s_name, name);
+  }
+  ret.set(s_hello, hello);
+  return ret;
+}
+
 const StaticString
   s_EXAMPLE1_NOTHING("EXAMPLE1_NOTHING"),
   s_EXAMPLE1_YEAR("EXAMPLE1_YEAR"),
@@ -59,6 +89,8 @@ class Example1Extension : public Extension {
     HHVM_FE(example1_life);
     HHVM_FE(example1_count_preallocate);
     HHVM_FE(example1_count_concatenate);
+    HHVM_FE(example1_greet_options);
+    HHVM_FE(example1_greet_make_options);
 
     loadSystemlib();
   }

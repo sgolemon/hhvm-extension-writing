@@ -18,3 +18,10 @@ function example1_count_preallocate(): string;
 
 <<__Native>>
 function example1_count_concatenate(): string;
+
+<<__Native>>
+function example1_greet_options(array $options): void;
+
+<<__Native>>
+function example1_greet_make_options(string $name = "",
+                                     bool $hello = true): array;

@@ -7,6 +7,9 @@ class Example1Extension : public Extension {
  public:
   Example1Extension(): Extension("example1", "1.0") {}
 
+  void moduleInit() override {
+    loadSystemlib();
+  }
 } s_example1_extension;
 
 HHVM_GET_MODULE(example1);

@@ -41,7 +41,11 @@ class Example3File : public SweepableResourceData {
 
 Resource HHVM_FUNCTION(example3_fopen, const String& filename,
                                        const String& mode) {
+#ifdef NEWOBJ
   return Resource(NEWOBJ(Example3File)(filename, mode));
+#else
+  return Resource(newres<Example3File>(filename, mode));
+#endif
 }
 
 void HHVM_FUNCTION(example3_fclose, const Resource& fp) {
